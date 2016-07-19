@@ -3,6 +3,7 @@
 namespace OC\PlatformBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use OC\PlatformBundle\Entity\Advert;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -18,7 +19,7 @@ class AdvertController extends Controller {
         if ($page < 1) {
             throw new NotFoundHttpException("Page " . $page . " inexistante.");
         }
-        
+
         $listAdverts = array(
             array(
                 'title' => 'Recherche développpeur Symfony',
@@ -47,13 +48,13 @@ class AdvertController extends Controller {
     }
 
     public function viewAction($id, Request $request) {
-        $advert = array(
-            'title' => 'Recherche développpeur Symfony2',
-            'id' => $id,
-            'author' => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-            'date' => new \Datetime()
-        );
+        $repository = $this->getDoctrine()->getManager()->getRepository("OCPlatformBundle:Advert");
+        
+        $advert = $repository->find($id);
+        
+        if ($advert === null) {
+            throw new NotFoundHttpException("L'annonce d'id " . $id . " n'existe pas !");
+        }
 
         return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
                     'advert' => $advert
@@ -61,18 +62,21 @@ class AdvertController extends Controller {
     }
 
     public function addAction(Request $request) {
+
+        $advert = new Advert();
+        $advert->setTitle('Recherche développeur Symfony.');
+        $advert->setAuthor('Alexandre');
+        $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
+        
+        //récupération de l'EM
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($advert);
+        $em->flush();
+
         if ($request->isMethod("POST")) {
             $request->getSession()->getFlashBag()->add("notice", "Annonce bien enregistrée.");
 
             return $this->redirectToRoute("oc_platform_view", array("id" => 5));
-        }
-        
-        $antispam = $this->container->get("oc_platform.antispam");
-        
-        $text = "...";
-        
-        if($antispam->isSpam($text)) {
-            throw new \Exception("Votre message a été détecté comme spam !");
         }
 
         return $this->render("OCPlatformBundle:Advert:add.html.twig");
