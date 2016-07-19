@@ -4,7 +4,7 @@ namespace OC\PlatformBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Description of AdvertController
@@ -18,7 +18,7 @@ class AdvertController extends Controller {
         if ($page < 1) {
             throw new NotFoundHttpException("Page " . $page . " inexistante.");
         }
-
+        
         $listAdverts = array(
             array(
                 'title' => 'Recherche développpeur Symfony',
