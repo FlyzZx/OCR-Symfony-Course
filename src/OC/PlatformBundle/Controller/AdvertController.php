@@ -72,7 +72,8 @@ class AdvertController extends Controller {
         $advert->setTitle('Recherche développeur Symfony.');
         $advert->setAuthor('Alexandre');
         $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
-
+        $advert->setEmail("nicolasfaraci@outlook.com");
+        
         $em = $this->getDoctrine()->getManager();
         
         $application1 = new Application();

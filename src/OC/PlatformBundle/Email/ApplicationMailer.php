@@ -31,7 +31,7 @@ class ApplicationMailer {
 
     public function sendNewNotification(Application $application) {
         $message = new Swift_Message("Nouvelle candidature", "Vous avez reçu une nouvelle candidature.");
-        $message->addTo($application->getAdvert()->getAuthor())->addFrom("admin@occourse.fr");
+        $message->addTo($application->getAdvert()->getEmail())->addFrom("noreply@platform.fr");
         $this->mailer->send($message);
     }
 
