@@ -1,41 +1,33 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+// src/OC/PlatformBundle/DoctrineListener/ApplicationCreationListener.php
 
 namespace OC\PlatformBundle\DoctrineListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use OC\PlatformBundle\Email\ApplicationMailer;
 use OC\PlatformBundle\Entity\Application;
 
-/**
- * Description of ApplicationCreationListener
- *
- * @author nicol
- */
-class ApplicationCreationListener {
+class ApplicationCreationListener
+{
+  /**
+   * @var ApplicationMailer
+   */
+  private $applicationMailer;
 
-    /**
-     * @var ApplicationMailer
-     */
-    private $applicationMailer;
+  public function __construct(ApplicationMailer $applicationMailer)
+  {
+    $this->applicationMailer = $applicationMailer;
+  }
 
-    public function __construct(ApplicationMailer $applicationMailer) {
-        $this->applicationMailer = $applicationMailer;
+  public function postPersist(LifecycleEventArgs $args)
+  {
+    $entity = $args->getObject();
+
+    // On ne veut envoyer un email que pour les entités Application
+    if (!$entity instanceof Application) {
+      return;
     }
 
-    public function postPersist(LifecycleEventArgs $args) {
-        $entity = $args->getObject();
-
-        if (!$entity instanceof Application) {
-            return;
-        }
-
-        $this->applicationMailer->sendNewNotification($entity);
-    }
-
+    $this->applicationMailer->sendNewNotification($entity);
+  }
 }

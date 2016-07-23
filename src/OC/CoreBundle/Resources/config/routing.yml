@@ -1,5 +1,7 @@
+# src/OC/CoreBundle/Resources/config/routing.yml
+
 oc_core_home:
-    path:   /
+    path: /
     defaults:
         _controller: OCCoreBundle:Core:index
 

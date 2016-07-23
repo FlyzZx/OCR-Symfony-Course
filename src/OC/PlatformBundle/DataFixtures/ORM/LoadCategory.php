@@ -1,42 +1,36 @@
 <?php
+// src/OC/PlatformBundle/DataFixtures/ORM/LoadCategory.php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-namespace OC\PlatformBundle\DateFixtures\ORM;
+namespace OC\PlatformBundle\DataFixtures\ORM;
 
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use OC\PlatformBundle\Entity\Category;
 
-/**
- * Description of LoadCategory
- *
- * @author nicol
- */
-class LoadCategory implements FixtureInterface {
+class LoadCategory implements FixtureInterface
+{
+  // Dans l'argument de la méthode load, l'objet $manager est l'EntityManager
+  public function load(ObjectManager $manager)
+  {
+    // Liste des noms de catégorie à ajouter
+    $names = array(
+      'Développement web',
+      'Développement mobile',
+      'Graphisme',
+      'Intégration',
+      'Réseau'
+    );
 
-    public function load(ObjectManager $manager) {
-        // Liste des noms de catégorie à ajouter
-        $names = array(
-            'Développement web',
-            'Développement mobile',
-            'Graphisme',
-            'Intégration',
-            'Réseau'
-        );
-        
-        foreach($names as $name) {
-            $category = new Category();
-            $category->setName($name);
-            
-            $manager->persist($category);
-        }
-        
-        $manager->flush();
+    foreach ($names as $name) {
+      // On crée la catégorie
+      $category = new Category();
+      $category->setName($name);
+
+      // On la persiste
+      $manager->persist($category);
     }
 
+    // On déclenche l'enregistrement de toutes les catégories
+    $manager->flush();
+  }
 }
