@@ -2,10 +2,11 @@
 
 namespace OC\PlatformBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Entity\Application;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use \Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 /**
  * Description of AdvertController
@@ -48,16 +49,20 @@ class AdvertController extends Controller {
     }
 
     public function viewAction($id, Request $request) {
-        $repository = $this->getDoctrine()->getManager()->getRepository("OCPlatformBundle:Advert");
-        
+        $em = $this->getDoctrine()->getManager();
+        $repository = $em->getRepository("OCPlatformBundle:Advert");
+
         $advert = $repository->find($id);
-        
+
         if ($advert === null) {
             throw new NotFoundHttpException("L'annonce d'id " . $id . " n'existe pas !");
         }
 
+        $listApplications = $em->getRepository("OCPlatformBundle:Application")->findBy(array("advert" => $advert));
+
         return $this->render('OCPlatformBundle:Advert:view.html.twig', array(
-                    'advert' => $advert
+                    'advert' => $advert,
+                    'listApplications' => $listApplications
         ));
     }
 
@@ -67,9 +72,20 @@ class AdvertController extends Controller {
         $advert->setTitle('Recherche développeur Symfony.');
         $advert->setAuthor('Alexandre');
         $advert->setContent("Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…");
-        
-        //récupération de l'EM
+
         $em = $this->getDoctrine()->getManager();
+        
+        $listSkills = $em->getRepository("OCPlatformBundle:Skill")->findAll();
+        
+        foreach($listSkills as $skill) {
+            $advertSkill = new \OC\PlatformBundle\Entity\AdvertSkill();
+            
+            $advertSkill->setAdvert($advert);
+            $advertSkill->setSkill($skill);
+            $advertSkill->setLevel("Expert");
+            $em->persist($advertSkill);
+        }
+        
         $em->persist($advert);
         $em->flush();
 
@@ -83,19 +99,28 @@ class AdvertController extends Controller {
     }
 
     public function editAction($id, Request $request) {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $advert = $em->getRepository("OCPlatformBundle:Advert")->find($id);
+
+        if ($advert === null) {
+            throw new NotFoundHttpException("L'annonce d'id " . $id . "n'existe pas");
+        }
+
+        $listCategories = $em->getRepository("OCPlatformBundle:Category")->findAll();
+
+        foreach ($listCategories as $category) {
+            $advert->addCategory($category);
+        }
+
+        $em->flush();
+
         if ($request->isMethod("POST")) {
             $request->getSession()->getFlashBag()->add("notice", "Annonce bien modifiée.");
 
             return $this->redirectToRoute("oc_platform_view", array("id" => 5));
         }
-
-        $advert = array(
-            'title' => 'Recherche développpeur Symfony',
-            'id' => $id,
-            'author' => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony débutant sur Lyon. Blabla…',
-            'date' => new \Datetime()
-        );
 
         return $this->render('OCPlatformBundle:Advert:edit.html.twig', array(
                     'advert' => $advert
@@ -103,6 +128,21 @@ class AdvertController extends Controller {
     }
 
     public function deleteAction($id) {
+        $em = $this->getDoctrine()->getManager();
+
+        $advert = $em->getRepository("OCPlatformBundle:Advert")->find($id);
+
+        if ($advert === null) {
+            throw new NotFoundHttpException("L'annonce d'id " . $id . "n'existe pas");
+        }
+
+        $listCategories = $em->getRepository("OCPlatformBundle:Category")->findAll();
+
+        foreach ($listCategories as $category) {
+            $advert->removeCategoryé($category);
+        }
+
+        $em->flush();
         return $this->render("OCPlatformBundle:Advert:delete.html.twig");
     }
 

@@ -2,18 +2,23 @@
 
 namespace OC\PlatformBundle\Entity;
 
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use OC\PlatformBundle\Repository\AdvertRepository;
 
 /**
  * Advert
  *
  * @ORM\Table(name="advert")
- * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\AdvertRepository")
+ * @ORM\Entity(repositoryClass="AdvertRepository")
  */
 class Advert {
     
     public function __construct() {
-        $this->date = new \DateTime();
+        $this->date = new DateTime();
+        $this->applications = new ArrayCollection();
     }
 
     /**
@@ -26,7 +31,7 @@ class Advert {
     private $id;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      *
      * @ORM\Column(name="date", type="datetime")
      */
@@ -57,6 +62,21 @@ class Advert {
      * @ORM\Column(name="published", type="boolean")
      */
     private $published = true;
+    
+    /**
+     * @ORM\OneToOne(targetEntity="Image", cascade={"persist"})
+     */
+    private $image;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Category", cascade={"persist"})
+     */
+    private $categories;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Application", mappedBy="advert")
+     */
+    private $applications;
 
     /**
      * Get id
@@ -70,7 +90,7 @@ class Advert {
     /**
      * Set date
      *
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return Advert
      */
@@ -83,7 +103,7 @@ class Advert {
     /**
      * Get date
      *
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDate() {
         return $this->date;
@@ -177,4 +197,96 @@ class Advert {
         return $this->published;
     }
 
+
+    /**
+     * Set image
+     *
+     * @param Image $image
+     *
+     * @return Advert
+     */
+    public function setImage(Image $image = null)
+    {
+        $this->image = $image;
+        
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return Image
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * Add category
+     *
+     * @param Category $category
+     *
+     * @return Advert
+     */
+    public function addCategory(Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param Category $category
+     */
+    public function removeCategory(Category $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
+    }
+
+    /**
+     * Add application
+     *
+     * @param Application $application
+     *
+     * @return Advert
+     */
+    public function addApplication(Application $application)
+    {
+        $this->applications[] = $application;
+        $application->setAdvert($this);
+        return $this;
+    }
+
+    /**
+     * Remove application
+     *
+     * @param Application $application
+     */
+    public function removeApplication(Application $application)
+    {
+        $this->applications->removeElement($application);
+    }
+
+    /**
+     * Get applications
+     *
+     * @return Collection
+     */
+    public function getApplications()
+    {
+        return $this->applications;
+    }
 }
