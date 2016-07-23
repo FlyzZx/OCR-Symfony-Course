@@ -3,25 +3,36 @@
 {% extends "OCPlatformBundle::layout.html.twig" %}
 
 {% block title %}
-  Accueil - {{ parent() }}
+    Accueil - {{ parent() }}
 {% endblock %}
 
 {% block ocplatform_body %}
 
-  <h2>Liste des annonces</h2>
-
-  <ul>
-    {% for advert in listAdverts %}
-      <li>
-        <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
-          {{ advert.title }}
-        </a>
-        par {{ advert.author }},
-        le {{ advert.date|date('d/m/Y') }}
-      </li>
-    {% else %}
-      <li>Pas (encore !) d'annonces</li>
-    {% endfor %}
-  </ul>
+    <h2>Liste des annonces</h2>
+    <ul class="pagination">
+        {% for i in 1 .. nbPages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ path('oc_platform_home', {'page': i}) }}" >{{ i }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <ul class="list-group">
+        {% for advert in listAdverts %}
+            <li class="list-group-item">
+                {% if advert.image is not null %}
+                    <img style="width: 15%;" class="img-thumbnail" src="{{ advert.image.url }}" alt="{{advert.image.alt}}" />
+                {% else %}
+                    <img style="width: 15%;" class="img-thumbnail" src="http://www.kathrein.gr/assets/image-not-found-787af104e97c3303510bd976e185ac3b.png" alt="Aucune image" />
+                {% endif %}
+                <a href="{{ path('oc_platform_view', {'id': advert.id}) }}">
+                    {{ advert.title }}
+                </a>
+                par {{ advert.author }},
+                le {{ advert.date|date('d/m/Y') }}
+            </li>
+        {% else %}
+            <li>Pas (encore !) d'annonces</li>
+            {% endfor %}
+    </ul>
 
 {% endblock %}

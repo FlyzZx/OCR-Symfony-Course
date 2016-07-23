@@ -7,13 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
-use OC\PlatformBundle\Repository\AdvertRepository;
 
 /**
  * Advert
  *
  * @ORM\Table(name="advert")
- * @ORM\Entity(repositoryClass="AdvertRepository")
+ * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\AdvertRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 class Advert {
@@ -66,6 +65,8 @@ class Advert {
     private $published = true;
     
     /**
+     * @var OC\PlatformBundle\Entity\Image
+     * 
      * @ORM\OneToOne(targetEntity="Image", cascade={"persist"})
      */
     private $image;
@@ -91,7 +92,7 @@ class Advert {
     private $nbApplications = 0;
     
     /**
-     * @ORM\Column(name="email", type="string", length=255, nullable=false)
+     * @ORM\Column(name="email", type="string", length=255)
      */   
     private $email;
     
