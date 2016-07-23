@@ -13,6 +13,7 @@ use OC\PlatformBundle\Repository\AdvertRepository;
  *
  * @ORM\Table(name="advert")
  * @ORM\Entity(repositoryClass="AdvertRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Advert {
     
@@ -77,6 +78,16 @@ class Advert {
      * @ORM\OneToMany(targetEntity="Application", mappedBy="advert")
      */
     private $applications;
+    
+    /**
+     * @ORM\Column(name="update_at", type="datetime", nullable=true)
+     */
+    private $updateAt;
+    
+    /**
+     * @ORM\Column(name="nb_applications", type="integer")
+     */
+    private $nbApplications = 0;
 
     /**
      * Get id
@@ -288,5 +299,68 @@ class Advert {
     public function getApplications()
     {
         return $this->applications;
+    }
+
+    /**
+     * Set updateAt
+     *
+     * @param \DateTime $updateAt
+     *
+     * @return Advert
+     */
+    public function setUpdateAt($updateAt)
+    {
+        $this->updateAt = $updateAt;
+
+        return $this;
+    }
+
+    /**
+     * Get updateAt
+     *
+     * @return \DateTime
+     */
+    public function getUpdateAt()
+    {
+        return $this->updateAt;
+    }
+    
+    /**
+     * @ORM\PreUpdate
+     */
+    public function updateDate() {
+        $this->setUpdateAt(new \DateTime());
+    }
+    
+    public function increaseApplication() {
+        $this->nbApplications++;
+    }
+    
+    public function decreaseApplication() {
+        $this->nbApplications--;
+    }
+
+    /**
+     * Set nbApplications
+     *
+     * @param integer $nbApplications
+     *
+     * @return Advert
+     */
+    public function setNbApplications($nbApplications)
+    {
+        $this->nbApplications = $nbApplications;
+
+        return $this;
+    }
+
+    /**
+     * Get nbApplications
+     *
+     * @return integer
+     */
+    public function getNbApplications()
+    {
+        return $this->nbApplications;
     }
 }

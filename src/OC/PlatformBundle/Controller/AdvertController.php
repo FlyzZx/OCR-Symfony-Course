@@ -75,18 +75,19 @@ class AdvertController extends Controller {
 
         $em = $this->getDoctrine()->getManager();
         
-        $listSkills = $em->getRepository("OCPlatformBundle:Skill")->findAll();
+        $application1 = new Application();
+        $application1->setAuthor("Toto");
+        $application1->setContent("Candidature de toto !");
+        $application1->setAdvert($advert);
         
-        foreach($listSkills as $skill) {
-            $advertSkill = new \OC\PlatformBundle\Entity\AdvertSkill();
-            
-            $advertSkill->setAdvert($advert);
-            $advertSkill->setSkill($skill);
-            $advertSkill->setLevel("Expert");
-            $em->persist($advertSkill);
-        }
+        $application2 = new Application();
+        $application2->setAuthor("Titi");
+        $application2->setContent("Candidature de titi !");
+        $application2->setAdvert($advert);
         
         $em->persist($advert);
+        $em->persist($application1);
+        $em->persist($application2);
         $em->flush();
 
         if ($request->isMethod("POST")) {
