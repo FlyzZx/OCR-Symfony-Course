@@ -7,3 +7,4 @@ oc_platform:
 # On inclut également les routes de notre CoreBundle, sans préfixe
 oc_core:
     resource: "@OCCoreBundle/Resources/config/routing.yml"
+    prefix: /
