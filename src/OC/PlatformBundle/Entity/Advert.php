@@ -1,11 +1,14 @@
 <?php
 
 namespace OC\PlatformBundle\Entity;
+// N'oubliez pas ce use :
+
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-// N'oubliez pas ce use :
 use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="oc_advert")
@@ -24,9 +27,10 @@ class Advert
   private $id;
 
   /**
-   * @var \DateTime
+   * @var DateTime
    *
    * @ORM\Column(name="date", type="datetime")
+   * @Assert\DateTime()
    */
   private $date;
 
@@ -34,6 +38,7 @@ class Advert
    * @var string
    *
    * @ORM\Column(name="title", type="string", length=255)
+   * @Assert\Length(min=10, minMessage="Le titre doit être au minimum de {{ limit }} caractères")
    */
   private $title;
 
@@ -41,6 +46,7 @@ class Advert
    * @var string
    *
    * @ORM\Column(name="author", type="string", length=255)
+   * @Assert\Length(min=2)
    */
   private $author;
 
@@ -48,6 +54,7 @@ class Advert
    * @var string
    *
    * @ORM\Column(name="content", type="string", length=255)
+   * @Assert\NotBlank()
    */
   private $content;
 
@@ -57,18 +64,19 @@ class Advert
   private $published = true;
 
   /**
-   * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
+   * @ORM\OneToOne(targetEntity="Image", cascade={"persist", "remove"})
+   * @Assert\Valid()
    */
   private $image;
 
   /**
-   * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category", cascade={"persist"})
+   * @ORM\ManyToMany(targetEntity="Category", cascade={"persist"})
    * @ORM\JoinTable(name="oc_advert_category")
    */
   private $categories;
 
   /**
-   * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\Application", mappedBy="advert")
+   * @ORM\OneToMany(targetEntity="Application", mappedBy="advert")
    */
   private $applications; // Notez le « s », une annonce est liée à plusieurs candidatures
 
@@ -122,7 +130,7 @@ class Advert
   }
 
   /**
-   * @param \DateTime $date
+   * @param DateTime $date
    */
   public function setDate($date)
   {
@@ -130,7 +138,7 @@ class Advert
   }
 
   /**
-   * @return \DateTime
+   * @return DateTime
    */
   public function getDate()
   {
@@ -255,7 +263,7 @@ class Advert
   }
 
   /**
-   * @return \Doctrine\Common\Collections\Collection
+   * @return Collection
    */
   public function getApplications()
   {
@@ -263,7 +271,7 @@ class Advert
   }
 
   /**
-   * @param \DateTime $updatedAt
+   * @param DateTime $updatedAt
    */
   public function setUpdatedAt(\Datetime $updatedAt = null)
   {
@@ -271,7 +279,7 @@ class Advert
   }
 
   /**
-   * @return \DateTime
+   * @return DateTime
    */
   public function getUpdatedAt()
   {
