@@ -1,19 +1,24 @@
 <?php
+// src/OC/PlatformBundle/Entity/Advert.php
 
 namespace OC\PlatformBundle\Entity;
-// N'oubliez pas ce use :
-
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use OC\PlatformBundle\Validator\Antiflood;
+// On rajoute ce use pour la contrainte :
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+// N'oubliez pas de rajouter ce « use », il définit le namespace pour les annotations de validation
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Table(name="oc_advert")
  * @ORM\Entity(repositoryClass="OC\PlatformBundle\Repository\AdvertRepository")
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @UniqueEntity(fields="title", message="Une annonce existe déjà avec ce titre.")
  */
 class Advert
 {
@@ -27,7 +32,7 @@ class Advert
   private $id;
 
   /**
-   * @var DateTime
+   * @var \DateTime
    *
    * @ORM\Column(name="date", type="datetime")
    * @Assert\DateTime()
@@ -37,8 +42,8 @@ class Advert
   /**
    * @var string
    *
-   * @ORM\Column(name="title", type="string", length=255)
-   * @Assert\Length(min=10, minMessage="Le titre doit être au minimum de {{ limit }} caractères")
+   * Et pour être logique, il faudrait aussi mettre la colonne titre en Unique pour Doctrine :
+   * @ORM\Column(name="title", type="string", length=255, unique=true)
    */
   private $title;
 
@@ -55,6 +60,7 @@ class Advert
    *
    * @ORM\Column(name="content", type="string", length=255)
    * @Assert\NotBlank()
+   * @Antiflood()
    */
   private $content;
 
@@ -64,19 +70,19 @@ class Advert
   private $published = true;
 
   /**
-   * @ORM\OneToOne(targetEntity="Image", cascade={"persist", "remove"})
+   * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
    * @Assert\Valid()
    */
   private $image;
 
   /**
-   * @ORM\ManyToMany(targetEntity="Category", cascade={"persist"})
+   * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category", cascade={"persist"})
    * @ORM\JoinTable(name="oc_advert_category")
    */
   private $categories;
 
   /**
-   * @ORM\OneToMany(targetEntity="Application", mappedBy="advert")
+   * @ORM\OneToMany(targetEntity="OC\PlatformBundle\Entity\Application", mappedBy="advert")
    */
   private $applications; // Notez le « s », une annonce est liée à plusieurs candidatures
 
@@ -122,6 +128,24 @@ class Advert
   }
 
   /**
+   * @Assert\Callback
+   */
+  public function isContentValid(ExecutionContextInterface $context)
+  {
+    $forbiddenWords = array('démotivation', 'abandon');
+
+    // On vérifie que le contenu ne contient pas l'un des mots
+    if (preg_match('#'.implode('|', $forbiddenWords).'#', $this->getContent())) {
+      // La règle est violée, on définit l'erreur
+      $context
+        ->buildViolation('Contenu invalide car il contient un mot interdit.') // message
+        ->atPath('content')                                                   // attribut de l'objet qui est violé
+        ->addViolation() // ceci déclenche l'erreur, ne l'oubliez pas
+      ;
+    }
+  }
+
+  /**
    * @return int
    */
   public function getId()
@@ -130,7 +154,7 @@ class Advert
   }
 
   /**
-   * @param DateTime $date
+   * @param \DateTime $date
    */
   public function setDate($date)
   {
@@ -138,7 +162,7 @@ class Advert
   }
 
   /**
-   * @return DateTime
+   * @return \DateTime
    */
   public function getDate()
   {
@@ -263,7 +287,7 @@ class Advert
   }
 
   /**
-   * @return Collection
+   * @return \Doctrine\Common\Collections\Collection
    */
   public function getApplications()
   {
@@ -271,7 +295,7 @@ class Advert
   }
 
   /**
-   * @param DateTime $updatedAt
+   * @param \DateTime $updatedAt
    */
   public function setUpdatedAt(\Datetime $updatedAt = null)
   {
@@ -279,7 +303,7 @@ class Advert
   }
 
   /**
-   * @return DateTime
+   * @return \DateTime
    */
   public function getUpdatedAt()
   {
