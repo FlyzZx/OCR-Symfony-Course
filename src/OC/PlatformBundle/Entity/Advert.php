@@ -57,7 +57,7 @@ class Advert
   private $published = true;
 
   /**
-   * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist"})
+   * @ORM\OneToOne(targetEntity="OC\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
    */
   private $image;
 
@@ -87,11 +87,6 @@ class Advert
    * @ORM\Column(name="slug", type="string", length=255, unique=true)
    */
   private $slug;
-  
-  /**
-   * @ORM\Column(name="email", type="string", length=255)
-   */
-  private $email;
 
   public function __construct()
   {
@@ -314,28 +309,4 @@ class Advert
   {
       return $this->slug;
   }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Advert
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
 }
