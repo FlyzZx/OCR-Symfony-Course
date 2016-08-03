@@ -79,7 +79,7 @@ class AdvertController extends Controller {
 
     /**
      * 
-     * @Security("has_role('ROLE_USER')")
+     * @Security("has_role('ROLE_AUTEUR')")
      */
     public function addAction(Request $request) {
         $advert = new Advert();
@@ -100,6 +100,10 @@ class AdvertController extends Controller {
         ));
     }
 
+   /**
+     * 
+     * @Security("has_role('ROLE_AUTEUR')")
+     */
     public function editAction($id, Request $request) {
         $em = $this->getDoctrine()->getManager();
 
