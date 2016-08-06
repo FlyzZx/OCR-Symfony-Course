@@ -16,6 +16,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AdvertController extends Controller {
+    
+    public function translationAction($name) {
+        return $this->render("OCPlatformBundle:Advert:translation.html.twig", array("name" => $name));
+    }
 
     public function indexAction($page) {
         if ($page < 1) {
@@ -94,7 +98,7 @@ class AdvertController extends Controller {
             $event = new MessagePostEvent($advert->getContent(), $advert->getUser());
             $this->get("event_dispatcher")->dispatch(PlatformEvent::POST_MESSAGE, $event);
             $advert->setContent($event->getMessage());
-            
+
             $em = $this->getDoctrine()->getManager();
             $advert->setUser($user);
             $em->persist($advert);
@@ -150,15 +154,15 @@ class AdvertController extends Controller {
 
         $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
 
-        //Si l'utilisateur n'est pas l'auteur
-        if ($advert->getUser() !== $this->getUser()) {
-            throw new UnauthorizedHttpException("Erreur", "Vous n'êtes pas autorisé à supprimer cette annonce !");
-        }
+
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id " . $id . " n'existe pas.");
         }
-
+        //Si l'utilisateur n'est pas l'auteur
+        if ($advert->getUser() !== $this->getUser()) {
+            throw new UnauthorizedHttpException("Erreur", "Vous n'êtes pas autorisé à supprimer cette annonce !");
+        }
         // On crée un formulaire vide, qui ne contiendra que le champ CSRF
         // Cela permet de protéger la suppression d'annonce contre cette faille
         $form = $this->get('form.factory')->create();

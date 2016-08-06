@@ -47,7 +47,7 @@ services:
     class: OC\PlatformBundle\Beta\BetaListener
     arguments:
         - "@oc_platform.beta.html_adder"
-        - "2017-06-01"
+        - "2016-08-25"
     tags:
       - { name: kernel.event_listener, event: kernel.response, method: processBeta } 
       

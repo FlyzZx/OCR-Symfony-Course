@@ -32,7 +32,7 @@ class BetaListener {
                 
         $remainingDays = $this->endDate->diff(new \DateTime())->days;
         
-        if($remainingDays <= 0) {
+        if($remainingDays >= 0) {
             return;
         }
         
