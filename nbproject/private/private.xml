@@ -3,20 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/Symfony/src/OC/UserBundle/Repository/UserRepository.php</file>
+            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Validator/Antiflood.php</file>
+            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Entity/Advert.php</file>
+            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Form/AdvertEditType.php</file>
+            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Resources/config/services.yml</file>
             <file>file:/C:/wamp/www/Symfony/src/OC/CoreBundle/Resources/views/layout.html.twig</file>
-            <file>file:/C:/wamp/www/Symfony/composer.json</file>
-            <file>file:/C:/wamp/www/Symfony/src/OC/UserBundle/Resources/config/services.xml</file>
-            <file>file:/C:/wamp/www/Symfony/app/config/config.yml</file>
-            <file>file:/C:/wamp/www/Symfony/app/config/routing.yml</file>
-            <file>file:/C:/wamp/www/Symfony/src/OC/UserBundle/Resources/views/layout.html.twig</file>
             <file>file:/C:/wamp/www/Symfony/app/config/security.yml</file>
             <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Controller/AdvertController.php</file>
-            <file>file:/C:/wamp/www/Symfony/src/OC/UserBundle/OCUserBundle.php</file>
-            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Resources/views/Advert/form.html.twig</file>
+            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Twig/AntispamExtension.php</file>
+            <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Email/ApplicationMailer.php</file>
             <file>file:/C:/wamp/www/Symfony/src/OC/PlatformBundle/Form/AdvertType.php</file>
-            <file>file:/C:/wamp/www/Symfony/app/AppKernel.php</file>
-            <file>file:/C:/wamp/www/Symfony/src/OC/UserBundle/Entity/User.php</file>
         </group>
     </open-files>
 </project-private>

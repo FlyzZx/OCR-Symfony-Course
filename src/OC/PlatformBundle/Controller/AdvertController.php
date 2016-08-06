@@ -5,12 +5,15 @@
 namespace OC\PlatformBundle\Controller;
 
 use OC\PlatformBundle\Entity\Advert;
+use OC\PlatformBundle\Event\MessagePostEvent;
+use OC\PlatformBundle\Event\PlatformEvent;
 use OC\PlatformBundle\Form\AdvertEditType;
 use OC\PlatformBundle\Form\AdvertType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AdvertController extends Controller {
 
@@ -84,9 +87,16 @@ class AdvertController extends Controller {
     public function addAction(Request $request) {
         $advert = new Advert();
         $form = $this->get('form.factory')->create(AdvertType::class, $advert);
-        
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+        $user = $this->getUser();
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid() && $user !== null) {
+
+            $event = new MessagePostEvent($advert->getContent(), $advert->getUser());
+            $this->get("event_dispatcher")->dispatch(PlatformEvent::POST_MESSAGE, $event);
+            $advert->setContent($event->getMessage());
+            
             $em = $this->getDoctrine()->getManager();
+            $advert->setUser($user);
             $em->persist($advert);
             $em->flush();
 
@@ -100,7 +110,7 @@ class AdvertController extends Controller {
         ));
     }
 
-   /**
+    /**
      * 
      * @Security("has_role('ROLE_AUTEUR')")
      */
@@ -111,6 +121,11 @@ class AdvertController extends Controller {
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id " . $id . " n'existe pas.");
+        }
+
+        //Si l'utilisateur n'est pas l'auteur
+        if ($advert->getUser() !== $this->getUser()) {
+            throw new UnauthorizedHttpException("Erreur", "Vous n'êtes pas autorisé à modifier cette annonce !");
         }
 
         $form = $this->get('form.factory')->create(AdvertEditType::class, $advert);
@@ -134,6 +149,11 @@ class AdvertController extends Controller {
         $em = $this->getDoctrine()->getManager();
 
         $advert = $em->getRepository('OCPlatformBundle:Advert')->find($id);
+
+        //Si l'utilisateur n'est pas l'auteur
+        if ($advert->getUser() !== $this->getUser()) {
+            throw new UnauthorizedHttpException("Erreur", "Vous n'êtes pas autorisé à supprimer cette annonce !");
+        }
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id " . $id . " n'existe pas.");

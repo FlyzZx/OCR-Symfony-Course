@@ -35,9 +35,6 @@
             {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
         </div>
     </div>
-
-    {{ form_row(form.author, {"value": app.user.username}) }}
-
     {% if form.published is defined %}
         {{ form_row(form.published) }}
     {% endif %}
